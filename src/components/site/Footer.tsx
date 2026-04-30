@@ -22,7 +22,7 @@ export const Footer = () => (
           <li><Link to="/portfolio" className="hover:text-foreground">Portfolio</Link></li>
           <li><Link to="/reviews" className="hover:text-foreground">Reviews</Link></li>
           <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
-          <li><Link to="/auth" className="hover:text-foreground">Admin</Link></li>
+          
         </ul>
       </div>
       <div>
