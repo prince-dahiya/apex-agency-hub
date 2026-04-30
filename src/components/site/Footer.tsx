@@ -22,7 +22,7 @@ export const Footer = () => (
           <li><Link to="/portfolio" className="hover:text-foreground">Portfolio</Link></li>
           <li><Link to="/reviews" className="hover:text-foreground">Reviews</Link></li>
           <li><Link to="/contact" className="hover:text-foreground">Contact</Link></li>
-          <li><Link to="/auth" className="hover:text-foreground">Admin</Link></li>
+          
         </ul>
       </div>
       <div>
@@ -34,8 +34,9 @@ export const Footer = () => (
         </ul>
       </div>
     </div>
-    <div className="border-t border-border/50 py-6 text-center text-xs text-muted-foreground">
-      © {new Date().getFullYear()} Apex Digital Solution. All rights reserved.
+    <div className="border-t border-border/50 py-6 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
+      <span>© {new Date().getFullYear()} Apex Digital Solution. All rights reserved.</span>
+      <Link to="/auth" aria-label="Admin" title="Admin" className="opacity-30 hover:opacity-100 transition-opacity">·</Link>
     </div>
   </footer>
 );
