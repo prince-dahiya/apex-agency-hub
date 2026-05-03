@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Sparkles, Zap, TrendingUp, Star, Users, Award } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles, Zap, TrendingUp, Star, Users, Award, Compass } from "lucide-react";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +13,11 @@ const stats = [
   { icon: TrendingUp, value: "5x", label: "Avg. Growth" },
   { icon: Star, value: "4.9", label: "Avg. Rating" },
 ];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.7, ease: [0.22, 1, 0.36, 1] } }),
+};
 
 const Home = () => {
   const [projects, setProjects] = useState<any[]>([]);
@@ -31,69 +37,124 @@ const Home = () => {
 
   return (
     <>
-      {/* HERO */}
+      {/* HERO — heritage masthead × modern motion */}
       <section className="relative overflow-hidden">
         <div
-          className="absolute inset-0 -z-10 opacity-50"
+          className="absolute inset-0 -z-10 opacity-30"
           style={{ backgroundImage: `url(${heroBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/60 via-background/85 to-background" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 animate-fade-up">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm">Premium Digital Agency</span>
-          </div>
-          <h1 className="font-display font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight animate-fade-up delay-100">
-            Grow Online.<br />
-            <span className="text-gradient">Look Professional.</span><br />
-            Convert More.
-          </h1>
-          <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up delay-200">
-            Apex Digital Solution helps ambitious brands win the internet — websites, SEO, social,
-            video, branding & content that actually drive results.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 animate-fade-up delay-300">
-            <Button asChild variant="hero" size="lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center relative">
+          {/* spinning conic ring badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }}
+            className="inline-flex items-center gap-3 mb-10"
+          >
+            <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-full">
+              <span className="absolute inset-0 rounded-full ring-conic opacity-70 blur-[1px]" />
+              <span className="relative h-8 w-8 rounded-full bg-background flex items-center justify-center">
+                <Compass className="h-4 w-4 text-primary" />
+              </span>
+            </span>
+            <span className="font-mono-sharp text-[11px] tracking-[0.3em] uppercase text-primary/90">
+              Est. — Premium Digital Atelier
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial="hidden" animate="show" variants={fadeUp}
+            className="font-serif-display font-light text-5xl sm:text-6xl md:text-7xl lg:text-[7.5rem] leading-[0.95] tracking-tight"
+          >
+            <span className="italic font-elegant">Grow</span> Online.<br />
+            <span className="text-gradient italic font-medium">Look Professional.</span><br />
+            Convert <span className="italic font-elegant">More</span>.
+          </motion.h1>
+
+          <motion.div initial="hidden" animate="show" custom={1} variants={fadeUp}
+            className="mt-8 max-w-xl mx-auto divider-flourish">
+            <span className="font-mono-sharp text-[10px] tracking-[0.4em] uppercase">⁂ Apex Digital ⁂</span>
+          </motion.div>
+
+          <motion.p initial="hidden" animate="show" custom={2} variants={fadeUp}
+            className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-elegant italic">
+            We blend timeless craft with modern technology — building brands that look professional,
+            grow online, and convert more.
+          </motion.p>
+
+          <motion.div initial="hidden" animate="show" custom={3} variants={fadeUp}
+            className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Button asChild variant="hero" size="lg" className="rounded-full px-8">
               <Link to="/contact">Book Free Consultation <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
-            <Button asChild variant="glass" size="lg">
+            <Button asChild variant="glass" size="lg" className="rounded-full px-8">
               <Link to="/portfolio">View Our Work</Link>
             </Button>
-          </div>
+          </motion.div>
         </div>
 
-        {/* floating orbs */}
-        <div className="absolute top-1/4 left-10 h-32 w-32 rounded-full bg-primary/30 blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-10 h-40 w-40 rounded-full bg-secondary/30 blur-3xl animate-float delay-500" />
+        {/* ambient orbs */}
+        <div className="absolute top-1/4 -left-10 h-72 w-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
+        <div className="absolute bottom-1/4 -right-10 h-80 w-80 rounded-full bg-accent/20 blur-[120px] animate-float delay-500" />
+        <div className="absolute top-1/2 left-1/2 h-96 w-96 rounded-full bg-secondary/10 blur-[140px]" />
+      </section>
+
+      {/* MARQUEE strip */}
+      <section className="border-y border-border/60 bg-card/30 overflow-hidden py-5">
+        <div className="flex animate-marquee whitespace-nowrap gap-12 font-elegant italic text-2xl text-muted-foreground/70">
+          {Array.from({ length: 2 }).map((_, k) => (
+            <div key={k} className="flex items-center gap-12">
+              {["Websites", "✦", "Branding", "✦", "SEO", "✦", "Social Media", "✦", "Video", "✦", "Content", "✦", "Growth", "✦"].map((w, i) => (
+                <span key={i} className={i % 2 ? "text-primary" : ""}>{w}</span>
+              ))}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* SERVICES */}
-      <section className="py-24">
+      <section className="py-28 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold uppercase tracking-widest text-primary">What we do</p>
-            <h2 className="mt-3 font-display font-bold text-4xl md:text-5xl">Services that move the needle</h2>
+          <div className="text-center mb-20">
+            <p className="font-mono-sharp text-[11px] uppercase tracking-[0.4em] text-primary">— Chapter I —</p>
+            <h2 className="mt-4 font-serif-display font-light text-4xl md:text-6xl">
+              Services that <span className="italic text-gradient-gold">move</span> the needle
+            </h2>
+            <p className="mt-4 font-elegant italic text-muted-foreground text-lg">A curated atelier of seven disciplines.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICE_KEYS.map((key) => {
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7 perspective-1000">
+            {SERVICE_KEYS.map((key, i) => {
               const s = SERVICES[key];
               const Icon = s.icon;
               return (
-                <Link
-                  to="/services"
+                <motion.div
                   key={key}
-                  className="glow-border rounded-2xl p-8 hover-lift group"
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: i * 0.06, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-glow mb-5`}>
-                    <Icon className="h-7 w-7 text-white" />
-                  </div>
-                  <h3 className="font-display font-semibold text-xl">{s.label}</h3>
-                  <p className="mt-2 text-muted-foreground">{s.description}</p>
-                  <div className="mt-5 inline-flex items-center text-sm text-primary group-hover:gap-2 gap-1 transition-all">
-                    Learn more <ArrowRight className="h-4 w-4" />
-                  </div>
-                </Link>
+                  <Link
+                    to="/services"
+                    className="block glow-border ornate-corners card-3d rounded-md p-8 group h-full"
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <div className={`h-16 w-16 rounded-md bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-glow rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
+                        <Icon className="h-8 w-8 text-white" />
+                      </div>
+                      <span className="font-mono-sharp text-[10px] tracking-widest text-muted-foreground/60">
+                        № {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <h3 className="font-serif-display text-2xl font-medium">{s.label}</h3>
+                    <div className="my-3 h-px w-10 bg-primary/60" />
+                    <p className="text-muted-foreground font-elegant text-base leading-relaxed">{s.description}</p>
+                    <div className="mt-6 inline-flex items-center text-sm text-primary group-hover:gap-3 gap-1 transition-all font-mono-sharp uppercase tracking-wider">
+                      Discover <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </Link>
+                </motion.div>
               );
             })}
           </div>
@@ -101,38 +162,57 @@ const Home = () => {
       </section>
 
       {/* WHY US */}
-      <section className="py-24 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-secondary">Why Apex</p>
-            <h2 className="mt-3 font-display font-bold text-4xl md:text-5xl">Built for results, not just looks.</h2>
-            <p className="mt-5 text-muted-foreground text-lg">
-              We blend strategy, design and growth marketing into one premium service. No fluff —
-              just measurable outcomes.
+      <section className="py-28 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+            <p className="font-mono-sharp text-[11px] uppercase tracking-[0.4em] text-accent">— Chapter II —</p>
+            <h2 className="mt-4 font-serif-display font-light text-4xl md:text-6xl leading-tight">
+              Built for <span className="italic text-gradient">results</span>,<br />not just looks.
+            </h2>
+            <p className="mt-6 text-muted-foreground text-lg font-elegant italic">
+              Strategy, design and growth marketing — fused into one premium service.
+              No fluff, only measurable outcomes.
             </p>
-            <ul className="mt-8 space-y-4">
+            <ul className="mt-10 space-y-5">
               {[
                 "Conversion-first design philosophy",
                 "Transparent reporting & analytics",
                 "Dedicated specialist per service",
                 "Premium quality at honest pricing",
-              ].map((t) => (
-                <li key={t} className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
-                  <span>{t}</span>
-                </li>
+              ].map((t, i) => (
+                <motion.li
+                  key={t}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-start gap-4 group"
+                >
+                  <span className="mt-1 h-7 w-7 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </span>
+                  <span className="text-lg">{t}</span>
+                </motion.li>
               ))}
             </ul>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {stats.map((s) => {
+          </motion.div>
+
+          <div className="grid grid-cols-2 gap-5 perspective-1000">
+            {stats.map((s, i) => {
               const Icon = s.icon;
               return (
-                <div key={s.label} className="glow-border rounded-2xl p-6 text-center hover-lift">
-                  <Icon className="h-8 w-8 text-primary mx-auto mb-3" />
-                  <div className="font-display font-bold text-3xl text-gradient">{s.value}</div>
-                  <div className="text-sm text-muted-foreground mt-1">{s.label}</div>
-                </div>
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 30, rotateY: -10 }}
+                  whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.7 }}
+                  className="glow-border ornate-corners card-3d rounded-md p-8 text-center"
+                >
+                  <Icon className="h-8 w-8 text-primary mx-auto mb-4" />
+                  <div className="font-serif-display font-medium text-5xl text-gradient-gold">{s.value}</div>
+                  <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2 font-mono-sharp">{s.label}</div>
+                </motion.div>
               );
             })}
           </div>
@@ -141,31 +221,45 @@ const Home = () => {
 
       {/* PORTFOLIO PREVIEW */}
       {projects.length > 0 && (
-        <section className="py-24">
+        <section className="py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
+            <div className="flex items-end justify-between mb-14 flex-wrap gap-4">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-primary">Featured work</p>
-                <h2 className="mt-3 font-display font-bold text-4xl md:text-5xl">Recent projects</h2>
+                <p className="font-mono-sharp text-[11px] uppercase tracking-[0.4em] text-primary">— Chapter III —</p>
+                <h2 className="mt-4 font-serif-display font-light text-4xl md:text-6xl">
+                  Featured <span className="italic text-gradient">work</span>
+                </h2>
               </div>
-              <Button asChild variant="outline"><Link to="/portfolio">View all</Link></Button>
+              <Button asChild variant="outline" className="rounded-full"><Link to="/portfolio">View archive →</Link></Button>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((p) => (
-                <Link to={`/portfolio/${p.slug}`} key={p.id} className="group glow-border rounded-2xl overflow-hidden hover-lift">
-                  <div className="aspect-video bg-muted relative overflow-hidden">
-                    {p.cover_image ? (
-                      <img src={p.cover_image} alt={p.title} loading="lazy" className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-primary opacity-30" />
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <p className="text-xs uppercase tracking-wider text-primary">{SERVICES[p.service_type as keyof typeof SERVICES]?.label}</p>
-                    <h3 className="font-display font-semibold text-lg mt-1">{p.title}</h3>
-                    {p.client_name && <p className="text-sm text-muted-foreground">{p.client_name}</p>}
-                  </div>
-                </Link>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
+              {projects.map((p, i) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                >
+                  <Link to={`/portfolio/${p.slug}`} className="group glow-border card-3d rounded-md overflow-hidden block">
+                    <div className="aspect-[4/3] bg-muted relative overflow-hidden">
+                      {p.cover_image ? (
+                        <img src={p.cover_image} alt={p.title} loading="lazy"
+                          className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-[1200ms]" />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-primary opacity-40" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                    </div>
+                    <div className="p-6">
+                      <p className="font-mono-sharp text-[10px] uppercase tracking-widest text-primary">
+                        {SERVICES[p.service_type as keyof typeof SERVICES]?.label}
+                      </p>
+                      <h3 className="font-serif-display font-medium text-2xl mt-2">{p.title}</h3>
+                      {p.client_name && <p className="text-sm text-muted-foreground font-elegant italic mt-1">— {p.client_name}</p>}
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -174,29 +268,38 @@ const Home = () => {
 
       {/* TESTIMONIALS */}
       {reviews.length > 0 && (
-        <section className="py-24">
+        <section className="py-28 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <p className="text-sm font-semibold uppercase tracking-widest text-secondary">Testimonials</p>
-              <h2 className="mt-3 font-display font-bold text-4xl md:text-5xl">Loved by clients</h2>
+              <p className="font-mono-sharp text-[11px] uppercase tracking-[0.4em] text-accent">— Chapter IV —</p>
+              <h2 className="mt-4 font-serif-display font-light text-4xl md:text-6xl">
+                Loved by <span className="italic text-gradient">clients</span>
+              </h2>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {reviews.map((r) => (
-                <div key={r.id} className="glow-border rounded-2xl p-6 hover-lift">
-                  <div className="flex gap-1 mb-3">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
+              {reviews.map((r, i) => (
+                <motion.div
+                  key={r.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="glow-border ornate-corners card-3d rounded-md p-8"
+                >
+                  <div className="flex gap-1 mb-4">
                     {Array.from({ length: r.rating }).map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                     ))}
                   </div>
-                  <p className="text-foreground/90">"{r.comment}"</p>
-                  <div className="mt-5 flex items-center gap-3">
-                    {r.photo_url && <img src={r.photo_url} alt={r.name} className="h-10 w-10 rounded-full object-cover" loading="lazy" />}
+                  <p className="text-foreground/95 font-elegant italic text-lg leading-relaxed">"{r.comment}"</p>
+                  <div className="mt-6 flex items-center gap-3 pt-4 border-t border-border/50">
+                    {r.photo_url && <img src={r.photo_url} alt={r.name} className="h-11 w-11 rounded-full object-cover ring-2 ring-primary/30" loading="lazy" />}
                     <div>
-                      <div className="font-semibold text-sm">{r.name}</div>
-                      {r.company && <div className="text-xs text-muted-foreground">{r.company}</div>}
+                      <div className="font-serif-display font-medium">{r.name}</div>
+                      {r.company && <div className="text-xs text-muted-foreground font-mono-sharp uppercase tracking-wider">{r.company}</div>}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -204,19 +307,28 @@ const Home = () => {
       )}
 
       {/* CTA */}
-      <section className="py-24">
+      <section className="py-28">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="glow-border rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-primary opacity-10 -z-10" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="glow-border ornate-corners rounded-md p-12 md:p-20 text-center relative overflow-hidden animate-pulse-glow"
+          >
+            <div className="absolute inset-0 bg-gradient-primary opacity-[0.08] -z-10" />
             <Zap className="h-12 w-12 text-primary mx-auto mb-6" />
-            <h2 className="font-display font-bold text-4xl md:text-5xl">Ready to grow?</h2>
-            <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
-              Let's craft a premium digital strategy that puts your brand ahead of the competition.
+            <p className="font-mono-sharp text-[11px] uppercase tracking-[0.4em] text-primary">— Finale —</p>
+            <h2 className="mt-4 font-serif-display font-light text-4xl md:text-6xl">
+              Ready to <span className="italic text-gradient-gold">grow</span>?
+            </h2>
+            <p className="mt-5 text-muted-foreground text-lg max-w-2xl mx-auto font-elegant italic">
+              Let's craft a premium digital strategy that puts your brand ahead — for generations.
             </p>
-            <Button asChild variant="hero" size="lg" className="mt-8">
+            <Button asChild variant="hero" size="lg" className="mt-10 rounded-full px-10">
               <Link to="/contact">Book Your Free Consultation</Link>
             </Button>
-          </div>
+          </motion.div>
         </div>
       </section>
     </>
