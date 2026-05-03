@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
 import { supabase } from "@/integrations/supabase/client";
 import heroBg from "@/assets/hero-bg.jpg";
+import leafOrnament from "@/assets/leaf-ornament.png";
 
 const stats = [
   { icon: Users, value: "120+", label: "Happy Clients" },
@@ -40,11 +41,24 @@ const Home = () => {
       {/* HERO — heritage masthead × modern motion */}
       <section className="relative overflow-hidden">
         <div
-          className="absolute inset-0 -z-10 opacity-30"
+          className="absolute inset-0 -z-10 opacity-50"
           style={{ backgroundImage: `url(${heroBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/60 via-background/85 to-background" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/70 via-background/85 to-background" />
 
+        {/* floating botanical ornaments */}
+        <motion.img
+          src={leafOrnament} alt="" aria-hidden loading="lazy"
+          className="absolute top-10 left-0 w-64 md:w-96 opacity-25 -rotate-12 pointer-events-none -z-10"
+          animate={{ y: [0, -14, 0], rotate: [-12, -8, -12] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.img
+          src={leafOrnament} alt="" aria-hidden loading="lazy"
+          className="absolute bottom-10 right-0 w-64 md:w-96 opacity-25 rotate-180 pointer-events-none -z-10"
+          animate={{ y: [0, 14, 0], rotate: [180, 175, 180] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center relative">
           {/* spinning conic ring badge */}
           <motion.div
