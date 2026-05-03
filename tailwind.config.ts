@@ -64,8 +64,10 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        display: ['Space Grotesk', 'sans-serif'],
+        display: ['Fraunces', 'Cormorant Garamond', 'serif'],
+        serif: ['Cormorant Garamond', 'Fraunces', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',
