@@ -16,8 +16,8 @@ const stats = [
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.7, ease: [0.22, 1, 0.36, 1] } }),
-};
+  show: (i: number = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } }),
+} as const;
 
 const Home = () => {
   const [projects, setProjects] = useState<any[]>([]);
