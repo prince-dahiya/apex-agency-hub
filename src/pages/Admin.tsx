@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ProjectFormDialog } from "@/components/admin/ProjectFormDialog";
+import { SiteSettingsPanel } from "@/components/admin/SiteSettingsPanel";
 import { SERVICES, ServiceKey } from "@/lib/services";
 import { toast } from "@/hooks/use-toast";
 
@@ -114,6 +115,7 @@ const Admin = () => {
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
           <TabsTrigger value="leads">Leads</TabsTrigger>
+          <TabsTrigger value="site">Site & Theme</TabsTrigger>
         </TabsList>
 
         <TabsContent value="projects" className="mt-6">
@@ -226,6 +228,10 @@ const Admin = () => {
               </div>
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="site" className="mt-6">
+          <SiteSettingsPanel />
         </TabsContent>
       </Tabs>
 

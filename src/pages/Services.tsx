@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const features: Record<string, string[]> = {
   website_design: ["Custom premium design", "Mobile responsive", "SEO-ready", "Fast loading", "CMS-friendly", "Lead-capture optimized"],
@@ -14,6 +15,7 @@ const features: Record<string, string[]> = {
 };
 
 const Services = () => {
+  const { getService } = useSiteSettings();
   useEffect(() => {
     document.title = "Services — Apex Digital Solution";
   }, []);
@@ -31,6 +33,7 @@ const Services = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {SERVICE_KEYS.map((key) => {
           const s = SERVICES[key];
+          const o = getService(key);
           const Icon = s.icon;
           return (
             <div key={key} className="glow-border rounded-3xl p-8 hover-lift relative overflow-hidden">
@@ -38,8 +41,8 @@ const Services = () => {
               <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-glow`}>
                 <Icon className="h-7 w-7 text-white" />
               </div>
-              <h3 className="mt-5 font-display font-bold text-2xl">{s.label}</h3>
-              <p className="mt-2 text-muted-foreground">{s.description}</p>
+              <h3 className="mt-5 font-display font-bold text-2xl">{o.label}</h3>
+              <p className="mt-2 text-muted-foreground">{o.description}</p>
               <ul className="mt-5 space-y-2">
                 {features[key].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm">

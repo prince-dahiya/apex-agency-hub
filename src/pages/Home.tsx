@@ -1,19 +1,14 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Sparkles, Zap, TrendingUp, Star, Users, Award, Compass } from "lucide-react";
+import { ArrowRight, CheckCircle2, Zap, Star, Compass } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import heroBg from "@/assets/hero-bg.jpg";
 import leafOrnament from "@/assets/leaf-ornament.png";
 
-const stats = [
-  { icon: Users, value: "120+", label: "Happy Clients" },
-  { icon: Award, value: "200+", label: "Projects Delivered" },
-  { icon: TrendingUp, value: "5x", label: "Avg. Growth" },
-  { icon: Star, value: "4.9", label: "Avg. Rating" },
-];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -21,6 +16,8 @@ const fadeUp = {
 } as const;
 
 const Home = () => {
+  const { getService, settings } = useSiteSettings();
+  const stats = settings.stats || [];
   const [projects, setProjects] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
 
@@ -140,6 +137,7 @@ const Home = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7 perspective-1000">
             {SERVICE_KEYS.map((key, i) => {
               const s = SERVICES[key];
+              const o = getService(key);
               const Icon = s.icon;
               return (
                 <motion.div
@@ -161,9 +159,9 @@ const Home = () => {
                         № {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>
-                    <h3 className="font-serif-display text-2xl font-medium">{s.label}</h3>
+                    <h3 className="font-serif-display text-2xl font-medium">{o.label}</h3>
                     <div className="my-3 h-px w-10 bg-primary/60" />
-                    <p className="text-muted-foreground font-elegant text-base leading-relaxed">{s.description}</p>
+                    <p className="text-muted-foreground font-elegant text-base leading-relaxed">{o.description}</p>
                     <div className="mt-6 inline-flex items-center text-sm text-primary group-hover:gap-3 gap-1 transition-all font-mono-sharp uppercase tracking-wider">
                       Discover <ArrowRight className="h-4 w-4" />
                     </div>
@@ -211,25 +209,24 @@ const Home = () => {
             </ul>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-5 perspective-1000">
-            {stats.map((s, i) => {
-              const Icon = s.icon;
-              return (
+          {stats.length > 0 && (
+            <div className="grid grid-cols-2 gap-5 perspective-1000">
+              {stats.map((s, i) => (
                 <motion.div
-                  key={s.label}
+                  key={`${s.label}-${i}`}
                   initial={{ opacity: 0, y: 30, rotateY: -10 }}
                   whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.7 }}
                   className="glow-border ornate-corners card-3d rounded-md p-8 text-center"
                 >
-                  <Icon className="h-8 w-8 text-primary mx-auto mb-4" />
+                  <Star className="h-8 w-8 text-primary mx-auto mb-4" />
                   <div className="font-serif-display font-medium text-5xl text-gradient-gold">{s.value}</div>
                   <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2 font-mono-sharp">{s.label}</div>
                 </motion.div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
