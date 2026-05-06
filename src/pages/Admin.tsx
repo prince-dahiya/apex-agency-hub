@@ -229,6 +229,10 @@ const Admin = () => {
             ))}
           </div>
         </TabsContent>
+
+        <TabsContent value="site" className="mt-6">
+          <SiteSettingsPanel />
+        </TabsContent>
       </Tabs>
 
       <ProjectFormDialog
