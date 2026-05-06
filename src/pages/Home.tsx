@@ -137,6 +137,7 @@ const Home = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7 perspective-1000">
             {SERVICE_KEYS.map((key, i) => {
               const s = SERVICES[key];
+              const o = getService(key);
               const Icon = s.icon;
               return (
                 <motion.div
@@ -158,9 +159,9 @@ const Home = () => {
                         № {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>
-                    <h3 className="font-serif-display text-2xl font-medium">{s.label}</h3>
+                    <h3 className="font-serif-display text-2xl font-medium">{o.label}</h3>
                     <div className="my-3 h-px w-10 bg-primary/60" />
-                    <p className="text-muted-foreground font-elegant text-base leading-relaxed">{s.description}</p>
+                    <p className="text-muted-foreground font-elegant text-base leading-relaxed">{o.description}</p>
                     <div className="mt-6 inline-flex items-center text-sm text-primary group-hover:gap-3 gap-1 transition-all font-mono-sharp uppercase tracking-wider">
                       Discover <ArrowRight className="h-4 w-4" />
                     </div>
