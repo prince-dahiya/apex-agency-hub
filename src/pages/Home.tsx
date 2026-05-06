@@ -1,19 +1,14 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Sparkles, Zap, TrendingUp, Star, Users, Award, Compass } from "lucide-react";
+import { ArrowRight, CheckCircle2, Zap, Star, Compass } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import heroBg from "@/assets/hero-bg.jpg";
 import leafOrnament from "@/assets/leaf-ornament.png";
 
-const stats = [
-  { icon: Users, value: "120+", label: "Happy Clients" },
-  { icon: Award, value: "200+", label: "Projects Delivered" },
-  { icon: TrendingUp, value: "5x", label: "Avg. Growth" },
-  { icon: Star, value: "4.9", label: "Avg. Rating" },
-];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
