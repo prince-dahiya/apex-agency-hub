@@ -208,25 +208,24 @@ const Home = () => {
             </ul>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-5 perspective-1000">
-            {stats.map((s, i) => {
-              const Icon = s.icon;
-              return (
+          {stats.length > 0 && (
+            <div className="grid grid-cols-2 gap-5 perspective-1000">
+              {stats.map((s, i) => (
                 <motion.div
-                  key={s.label}
+                  key={`${s.label}-${i}`}
                   initial={{ opacity: 0, y: 30, rotateY: -10 }}
                   whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.7 }}
                   className="glow-border ornate-corners card-3d rounded-md p-8 text-center"
                 >
-                  <Icon className="h-8 w-8 text-primary mx-auto mb-4" />
+                  <Star className="h-8 w-8 text-primary mx-auto mb-4" />
                   <div className="font-serif-display font-medium text-5xl text-gradient-gold">{s.value}</div>
                   <div className="text-xs uppercase tracking-widest text-muted-foreground mt-2 font-mono-sharp">{s.label}</div>
                 </motion.div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
