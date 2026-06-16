@@ -9,7 +9,7 @@ export const Footer = () => (
           <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center">
             <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="font-display font-bold text-lg">Apex Digital Solution</span>
+          <span className="font-display font-bold text-lg">Northstarr</span>
         </Link>
         <p className="mt-4 text-muted-foreground max-w-md">
           Grow Online. Look Professional. Convert More. Premium digital services for ambitious brands.
@@ -35,7 +35,7 @@ export const Footer = () => (
       </div>
     </div>
     <div className="border-t border-border/50 py-6 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-      <span>© {new Date().getFullYear()} Apex Digital Solution. All rights reserved.</span>
+      <span>© {new Date().getFullYear()} Northstarr. All rights reserved.</span>
       <Link to="/auth" aria-label="Admin" title="Admin" className="opacity-30 hover:opacity-100 transition-opacity">·</Link>
     </div>
   </footer>

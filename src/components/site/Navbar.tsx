@@ -41,7 +41,7 @@ export const Navbar = () => {
             <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <span className="font-display font-bold text-lg tracking-tight">
-            Apex<span className="text-gradient">.</span>
+            Northstarr<span className="text-gradient">.</span>
           </span>
         </Link>
 

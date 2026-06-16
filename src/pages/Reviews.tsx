@@ -25,7 +25,7 @@ const Reviews = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    document.title = "Reviews — Apex Digital Solution";
+    document.title = "Reviews — Northstarr";
     load();
   }, []);
 

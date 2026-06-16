@@ -17,7 +17,7 @@ const features: Record<string, string[]> = {
 const Services = () => {
   const { getService } = useSiteSettings();
   useEffect(() => {
-    document.title = "Services — Apex Digital Solution";
+    document.title = "Services — Northstarr";
   }, []);
 
   return (

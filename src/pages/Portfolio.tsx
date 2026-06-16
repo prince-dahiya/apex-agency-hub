@@ -10,7 +10,7 @@ const Portfolio = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Portfolio — Apex Digital Solution";
+    document.title = "Portfolio — Northstarr";
     supabase
       .from("projects")
       .select("*")

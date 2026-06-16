@@ -18,7 +18,7 @@ const Auth = () => {
   const { session } = useAuth();
 
   useEffect(() => {
-    document.title = "Admin — Apex Digital Solution";
+    document.title = "Admin — Northstarr";
     if (session) navigate("/admin", { replace: true });
   }, [session, navigate]);
 
@@ -58,7 +58,7 @@ const Auth = () => {
         <div className="h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
           <Sparkles className="h-5 w-5 text-primary-foreground" />
         </div>
-        <span className="font-display font-bold text-xl">Apex Admin</span>
+        <span className="font-display font-bold text-xl">Northstarr Admin</span>
       </Link>
 
       <div className="glow-border rounded-3xl p-8">

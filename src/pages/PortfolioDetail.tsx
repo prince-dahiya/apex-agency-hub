@@ -15,7 +15,7 @@ const PortfolioDetail = () => {
     supabase.from("projects").select("*").eq("slug", slug).maybeSingle().then(({ data }) => {
       setProject(data);
       setLoading(false);
-      if (data) document.title = `${data.title} — Apex`;
+      if (data) document.title = `${data.title} — Northstarr`;
     });
   }, [slug]);
 
