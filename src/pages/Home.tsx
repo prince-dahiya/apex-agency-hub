@@ -22,7 +22,7 @@ const Home = () => {
   const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
-    document.title = "Apex Digital Solution — Grow Online. Look Professional. Convert More.";
+    document.title = "Northstarr — Build. Automate. Scale. Dominate.";
     const meta = document.querySelector('meta[name="description"]') ||
       Object.assign(document.createElement("meta"), { name: "description" });
     meta.setAttribute("content",
@@ -84,7 +84,7 @@ const Home = () => {
 
           <motion.div initial="hidden" animate="show" custom={1} variants={fadeUp}
             className="mt-8 max-w-xl mx-auto divider-flourish">
-            <span className="font-mono-sharp text-[10px] tracking-[0.4em] uppercase">⁂ Apex Digital ⁂</span>
+            <span className="font-mono-sharp text-[10px] tracking-[0.4em] uppercase">⁂ Northstarr ⁂</span>
           </motion.div>
 
           <motion.p initial="hidden" animate="show" custom={2} variants={fadeUp}

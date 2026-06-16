@@ -22,7 +22,7 @@ const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => { document.title = "Contact — Apex Digital Solution"; }, []);
+  useEffect(() => { document.title = "Contact — Northstarr"; }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -27,7 +27,7 @@ const Admin = () => {
   };
 
   useEffect(() => {
-    document.title = "Admin Dashboard — Apex";
+    document.title = "Admin Dashboard — Northstarr";
     if (isAdmin) loadAll();
   }, [isAdmin]);
 
