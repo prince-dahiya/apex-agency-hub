@@ -60,7 +60,7 @@ const Contact = () => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+          <a href="https://wa.me/918683899730" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-glow">
               <MessageCircle className="h-6 w-6 text-white" />
             </div>
@@ -78,7 +78,7 @@ const Contact = () => {
               <div className="text-sm text-muted-foreground">princedahiya605@gmail.com</div>
             </div>
           </a>
-          <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+          <a href="https://www.instagram.com/northstarr.co.in/" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-glow">
               <Instagram className="h-6 w-6 text-white" />
             </div>
