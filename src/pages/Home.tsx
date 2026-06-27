@@ -70,7 +70,7 @@ const Home = () => {
               </span>
             </span>
             <span className="font-mono-sharp text-[11px] tracking-[0.3em] uppercase text-primary/90">
-              Est. — Premium Digital Atelier
+              {hero.badge || "Est. — Premium Digital Atelier"}
             </span>
           </motion.div>
 
@@ -78,32 +78,32 @@ const Home = () => {
             initial="hidden" animate="show" variants={fadeUp}
             className="font-serif-display font-light text-5xl sm:text-6xl md:text-7xl lg:text-[7.5rem] leading-[0.95] tracking-tight"
           >
-            <span className="italic font-elegant">Grow</span> Online.<br />
-            <span className="text-gradient italic font-medium">Look Professional.</span><br />
-            Convert <span className="italic font-elegant">More</span>.
+            <span className="italic font-elegant">{hero.line1 || "Grow Online."}</span><br />
+            <span className="text-gradient italic font-medium">{hero.line2 || "Look Professional."}</span><br />
+            {hero.line3 || "Convert More."}
           </motion.h1>
 
           <motion.div initial="hidden" animate="show" custom={1} variants={fadeUp}
             className="mt-8 max-w-xl mx-auto divider-flourish">
-            <span className="font-mono-sharp text-[10px] tracking-[0.4em] uppercase">⁂ Northstarr ⁂</span>
+            <span className="font-mono-sharp text-[10px] tracking-[0.4em] uppercase">{hero.tagline || "⁂ Northstarr ⁂"}</span>
           </motion.div>
 
           <motion.p initial="hidden" animate="show" custom={2} variants={fadeUp}
             className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-elegant italic">
-            We blend timeless craft with modern technology — building brands that look professional,
-            grow online, and convert more.
+            {hero.subtitle || "We blend timeless craft with modern technology — building brands that look professional, grow online, and convert more."}
           </motion.p>
 
           <motion.div initial="hidden" animate="show" custom={3} variants={fadeUp}
             className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Button asChild variant="hero" size="lg" className="rounded-full px-8">
-              <Link to="/contact">Book Free Consultation <ArrowRight className="ml-1 h-4 w-4" /></Link>
+              <Link to="/contact">{hero.ctaPrimary || "Book Free Consultation"} <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
             <Button asChild variant="glass" size="lg" className="rounded-full px-8">
-              <Link to="/portfolio">View Our Work</Link>
+              <Link to="/portfolio">{hero.ctaSecondary || "View Our Work"}</Link>
             </Button>
           </motion.div>
         </div>
+
 
         {/* ambient orbs */}
         <div className="absolute top-1/4 -left-10 h-72 w-72 rounded-full bg-primary/20 blur-[120px] animate-float" />
