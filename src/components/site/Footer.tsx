@@ -29,8 +29,8 @@ export const Footer = () => (
         <h4 className="font-display font-semibold mb-3">Connect</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li><a href="mailto:princedahiya605@gmail.com" className="hover:text-foreground inline-flex items-center gap-2"><Mail className="h-4 w-4" /> Email</a></li>
-          <li><a href="https://wa.me/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground inline-flex items-center gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a></li>
-          <li><a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground inline-flex items-center gap-2"><Instagram className="h-4 w-4" /> Instagram</a></li>
+          <li><a href="https://wa.me/918683899730" target="_blank" rel="noopener noreferrer" className="hover:text-foreground inline-flex items-center gap-2"><MessageCircle className="h-4 w-4" /> WhatsApp</a></li>
+          <li><a href="https://www.instagram.com/northstarr.co.in/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground inline-flex items-center gap-2"><Instagram className="h-4 w-4" /> Instagram</a></li>
         </ul>
       </div>
     </div>
