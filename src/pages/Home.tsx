@@ -18,6 +18,7 @@ const fadeUp = {
 const Home = () => {
   const { getService, settings } = useSiteSettings();
   const stats = settings.stats || [];
+  const hero = settings.hero || {};
   const [projects, setProjects] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
 
