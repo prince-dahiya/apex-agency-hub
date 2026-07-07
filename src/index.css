@@ -71,6 +71,10 @@
     /* Motion */
     --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
     --transition-base: all 0.45s var(--ease-smooth);
+    --section-space-28: 7rem;
+    --section-space-16: 4rem;
+    --content-max: 80rem;
+    --animation-intensity: 1;
 
     --sidebar-background: 28 25% 6%;
     --sidebar-foreground: 38 30% 88%;
@@ -223,7 +227,42 @@
   .delay-500 { animation-delay: 0.5s; }
   .perspective-1000 { perspective: 1000px; }
   .preserve-3d { transform-style: preserve-3d; }
+
+  .max-w-7xl { max-width: var(--content-max); }
+  .py-28 { padding-top: var(--section-space-28); padding-bottom: var(--section-space-28); }
+  .py-16 { padding-top: var(--section-space-16); padding-bottom: var(--section-space-16); }
 }
+
+html[data-content-width="focused"] { --content-max: 68rem; }
+html[data-content-width="wide"] { --content-max: 80rem; }
+html[data-content-width="full"] { --content-max: 94rem; }
+
+html[data-layout-density="compact"] { --section-space-28: 4.5rem; --section-space-16: 2.75rem; }
+html[data-layout-density="balanced"] { --section-space-28: 7rem; --section-space-16: 4rem; }
+html[data-layout-density="spacious"] { --section-space-28: 9.5rem; --section-space-16: 5.5rem; }
+
+html[data-card-depth="flat"] .glow-border,
+html[data-card-depth="flat"] .card-3d { box-shadow: none; }
+html[data-card-depth="flat"] .glow-border::after,
+html[data-card-depth="flat"] .ornate-corners::before,
+html[data-card-depth="flat"] .ornate-corners::after { opacity: 0; }
+html[data-card-depth="soft"] .card-3d { box-shadow: var(--shadow-card); }
+html[data-card-depth="soft"] .card-3d:hover { transform: translateY(-6px); box-shadow: var(--shadow-elegant); }
+html[data-card-depth="deep"] .card-3d:hover { transform: translate(-6px, -6px) rotateX(4deg) rotateY(-4deg) scale(calc(1 + (0.01 * var(--animation-intensity)))); }
+
+html[data-animation-mode="none"] *,
+html[data-hero3d="off"] .ring-conic,
+html[data-hero3d="off"] .animate-float,
+html[data-hero3d="off"] .animate-pulse-glow { animation: none !important; }
+html[data-animation-mode="none"] .hover-lift:hover,
+html[data-animation-mode="none"] .card-3d:hover,
+html[data-hero3d="off"] .card-3d:hover { transform: none !important; }
+html[data-animation-mode="calm"] .card-3d:hover { transform: translateY(-4px); }
+html[data-animation-mode="cinematic"] .card-3d:hover { transform: translate(-10px, -10px) rotateX(7deg) rotateY(-7deg) scale(calc(1 + (0.018 * var(--animation-intensity)))); }
+html[data-animation-mode="cinematic"] .animate-float { animation-duration: calc(5s / max(var(--animation-intensity), 0.4)); }
+html[data-animation-mode="cinematic"] .ring-conic { animation-duration: calc(5s / max(var(--animation-intensity), 0.4)); }
+
+html[data-texture="off"] body::before { display: none; }
 
 @keyframes fade-up { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
