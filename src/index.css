@@ -75,6 +75,9 @@
     --section-space-16: 4rem;
     --content-max: 80rem;
     --animation-intensity: 1;
+    --motion-card-scale: 1.012;
+    --motion-float-duration: 7s;
+    --motion-ring-duration: 8s;
 
     --sidebar-background: 28 25% 6%;
     --sidebar-foreground: 38 30% 88%;
@@ -258,9 +261,10 @@ html[data-animation-mode="none"] .hover-lift:hover,
 html[data-animation-mode="none"] .card-3d:hover,
 html[data-hero3d="off"] .card-3d:hover { transform: none !important; }
 html[data-animation-mode="calm"] .card-3d:hover { transform: translateY(-4px); }
-html[data-animation-mode="cinematic"] .card-3d:hover { transform: translate(-10px, -10px) rotateX(7deg) rotateY(-7deg) scale(calc(1 + (0.018 * var(--animation-intensity)))); }
-html[data-animation-mode="cinematic"] .animate-float { animation-duration: calc(5s / max(var(--animation-intensity), 0.4)); }
-html[data-animation-mode="cinematic"] .ring-conic { animation-duration: calc(5s / max(var(--animation-intensity), 0.4)); }
+html[data-card-depth="deep"] .card-3d:hover { transform: translate(-6px, -6px) rotateX(4deg) rotateY(-4deg) scale(var(--motion-card-scale)); }
+html[data-animation-mode="cinematic"] .card-3d:hover { transform: translate(-10px, -10px) rotateX(7deg) rotateY(-7deg) scale(var(--motion-card-scale)); }
+html[data-animation-mode="cinematic"] .animate-float { animation-duration: var(--motion-float-duration); }
+html[data-animation-mode="cinematic"] .ring-conic { animation-duration: var(--motion-ring-duration); }
 
 html[data-texture="off"] body::before { display: none; }
 
