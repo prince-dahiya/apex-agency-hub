@@ -8,6 +8,7 @@ import { SERVICES, SERVICE_KEYS, ServiceKey } from "@/lib/services";
 import {
   useSiteSettings,
   ServiceOverride,
+  CustomService,
   StatItem,
   ThemeSettings,
   HeroSettings,
@@ -40,6 +41,7 @@ const POPULAR_FONTS = [
 export const SiteSettingsPanel = () => {
   const { settings, reload } = useSiteSettings();
   const [services, setServices] = useState<Partial<Record<ServiceKey, ServiceOverride>>>({});
+  const [customServices, setCustomServices] = useState<CustomService[]>([]);
   const [stats, setStats] = useState<StatItem[]>([]);
   const [theme, setTheme] = useState<ThemeSettings>({});
   const [hero, setHero] = useState<HeroSettings>({});
@@ -48,6 +50,7 @@ export const SiteSettingsPanel = () => {
 
   useEffect(() => {
     setServices(settings.services || {});
+    setCustomServices(settings.customServices || []);
     setStats(settings.stats || []);
     setTheme(settings.theme || {});
     setHero(settings.hero || {});
@@ -58,6 +61,7 @@ export const SiteSettingsPanel = () => {
     setSaving(true);
     try {
       await upsert("services", services);
+      await upsert("customServices", customServices);
       await upsert("stats", stats);
       await upsert("theme", theme);
       await upsert("hero", hero);
@@ -90,6 +94,17 @@ export const SiteSettingsPanel = () => {
     const next = [...leadFields];
     next[i] = { ...next[i], ...patch };
     setLeadFields(next);
+  };
+
+  const addCustomService = () => setCustomServices([
+    ...customServices,
+    { id: `service_${Date.now()}`, label: "", tagline: "", description: "", features: "" },
+  ]);
+
+  const updateCustomService = (i: number, patch: Partial<CustomService>) => {
+    const next = [...customServices];
+    next[i] = { ...next[i], ...patch };
+    setCustomServices(next);
   };
 
   const colorFields: Array<[keyof ThemeSettings, string]> = [
@@ -281,8 +296,13 @@ export const SiteSettingsPanel = () => {
 
       {/* SERVICES */}
       <section className="glow-border rounded-xl p-6">
-        <h2 className="font-display text-2xl font-bold mb-1">Services & bios</h2>
-        <p className="text-sm text-muted-foreground mb-5">Edit name, tagline & description shown on the site.</p>
+        <div className="flex items-center justify-between mb-1 gap-3 flex-wrap">
+          <h2 className="font-display text-2xl font-bold">Services & bios</h2>
+          <Button size="sm" variant="outline" onClick={addCustomService}>
+            <Plus className="h-4 w-4 mr-1" /> Add new service
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground mb-5">Edit existing services or add new service cards shown to clients.</p>
         <div className="grid gap-5">
           {SERVICE_KEYS.map((key) => {
             const base = SERVICES[key];
@@ -306,6 +326,31 @@ export const SiteSettingsPanel = () => {
               </div>
             );
           })}
+          {customServices.map((service, i) => (
+            <div key={service.id} className="rounded-lg border border-primary/40 p-4 grid md:grid-cols-3 gap-3">
+              <div>
+                <Label className="text-xs">New service title</Label>
+                <Input value={service.label} placeholder="Ads Management" onChange={(e) => updateCustomService(i, { label: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Tagline</Label>
+                <Input value={service.tagline || ""} placeholder="Campaigns that convert" onChange={(e) => updateCustomService(i, { tagline: e.target.value })} />
+              </div>
+              <div className="flex items-end justify-end">
+                <Button size="sm" variant="outline" onClick={() => setCustomServices(customServices.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-4 w-4 mr-1" /> Remove
+                </Button>
+              </div>
+              <div className="md:col-span-3">
+                <Label className="text-xs">Description / bio</Label>
+                <Textarea rows={2} value={service.description} placeholder="Describe what this service includes…" onChange={(e) => updateCustomService(i, { description: e.target.value })} />
+              </div>
+              <div className="md:col-span-3">
+                <Label className="text-xs">Feature bullets (one per line)</Label>
+                <Textarea rows={2} value={service.features || ""} placeholder={"Launch strategy\nCreative testing\nWeekly optimisation"} onChange={(e) => updateCustomService(i, { features: e.target.value })} />
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
