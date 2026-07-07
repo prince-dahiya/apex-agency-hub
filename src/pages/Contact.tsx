@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { z } from "zod";
 
 const schema = z.object({
@@ -19,8 +20,11 @@ const schema = z.object({
 });
 
 const Contact = () => {
+  const { settings, getService } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
+  const [extraAnswers, setExtraAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const extraFields = (settings.leadFields || []).filter((field) => field.label.trim());
 
   useEffect(() => { document.title = "Contact — Northstarr"; }, []);
 
@@ -31,13 +35,26 @@ const Contact = () => {
       toast({ title: "Please check your form", description: parsed.error.issues[0].message, variant: "destructive" });
       return;
     }
+
+    const missingField = extraFields.find((field) => field.required && !extraAnswers[field.id]?.trim());
+    if (missingField) {
+      toast({ title: "Please check your form", description: `${missingField.label} is required.`, variant: "destructive" });
+      return;
+    }
+
+    const extraMessage = extraFields
+      .map((field) => ({ label: field.label.trim(), answer: (extraAnswers[field.id] || "").trim() }))
+      .filter((item) => item.answer)
+      .map((item) => `${item.label}: ${item.answer}`)
+      .join("\n");
+
     setSubmitting(true);
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
       email: form.email.trim(),
       phone: form.phone.trim() || null,
       service: form.service || null,
-      message: form.message.trim(),
+      message: extraMessage ? `${form.message.trim()}\n\nExtra client details:\n${extraMessage}` : form.message.trim(),
     });
     setSubmitting(false);
     if (error) {
@@ -45,6 +62,7 @@ const Contact = () => {
     } else {
       toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
       setForm({ name: "", email: "", phone: "", service: "", message: "" });
+      setExtraAnswers({});
     }
   };
 
@@ -60,7 +78,7 @@ const Contact = () => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <a href="https://wa.me/918683899730" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+          <a href="https://wa.me/918683899730" target="_top" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-glow">
               <MessageCircle className="h-6 w-6 text-white" />
             </div>
@@ -78,7 +96,7 @@ const Contact = () => {
               <div className="text-sm text-muted-foreground">princedahiya605@gmail.com</div>
             </div>
           </a>
-          <a href="https://www.instagram.com/northstarr.co.in/" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+          <a href="https://www.instagram.com/northstarr.co.in/" target="_top" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-glow">
               <Instagram className="h-6 w-6 text-white" />
             </div>
@@ -120,12 +138,48 @@ const Contact = () => {
                 <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
                 <SelectContent>
                   {SERVICE_KEYS.map((k) => (
-                    <SelectItem key={k} value={SERVICES[k].label}>{SERVICES[k].label}</SelectItem>
+                    <SelectItem key={k} value={getService(k).label}>{getService(k).label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
+          {extraFields.length > 0 && (
+            <div className="grid md:grid-cols-2 gap-4">
+              {extraFields.map((field) => (
+                <div key={field.id} className={field.type === "textarea" ? "md:col-span-2" : ""}>
+                  <Label>{field.label}{field.required ? " *" : ""}</Label>
+                  {field.type === "textarea" ? (
+                    <Textarea
+                      value={extraAnswers[field.id] || ""}
+                      onChange={(e) => setExtraAnswers({ ...extraAnswers, [field.id]: e.target.value })}
+                      rows={3}
+                      required={field.required}
+                      placeholder={field.placeholder || ""}
+                      maxLength={1000}
+                    />
+                  ) : field.type === "select" ? (
+                    <Select value={extraAnswers[field.id] || ""} onValueChange={(v) => setExtraAnswers({ ...extraAnswers, [field.id]: v })}>
+                      <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
+                      <SelectContent>
+                        {(field.options || "").split(",").map((option) => option.trim()).filter(Boolean).map((option) => (
+                          <SelectItem key={option} value={option}>{option}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      value={extraAnswers[field.id] || ""}
+                      onChange={(e) => setExtraAnswers({ ...extraAnswers, [field.id]: e.target.value })}
+                      required={field.required}
+                      placeholder={field.placeholder || ""}
+                      maxLength={300}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <div>
             <Label>Message *</Label>
             <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required maxLength={2000} />
