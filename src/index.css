@@ -251,8 +251,6 @@ html[data-card-depth="flat"] .ornate-corners::before,
 html[data-card-depth="flat"] .ornate-corners::after { opacity: 0; }
 html[data-card-depth="soft"] .card-3d { box-shadow: var(--shadow-card); }
 html[data-card-depth="soft"] .card-3d:hover { transform: translateY(-6px); box-shadow: var(--shadow-elegant); }
-html[data-card-depth="deep"] .card-3d:hover { transform: translate(-6px, -6px) rotateX(4deg) rotateY(-4deg) scale(calc(1 + (0.01 * var(--animation-intensity)))); }
-
 html[data-animation-mode="none"] *,
 html[data-hero3d="off"] .ring-conic,
 html[data-hero3d="off"] .animate-float,
