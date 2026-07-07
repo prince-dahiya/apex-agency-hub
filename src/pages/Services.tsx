@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SERVICES, SERVICE_KEYS } from "@/lib/services";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -15,7 +15,8 @@ const features: Record<string, string[]> = {
 };
 
 const Services = () => {
-  const { getService } = useSiteSettings();
+  const { getService, settings } = useSiteSettings();
+  const customServices = (settings.customServices || []).filter((service) => service.label.trim() && service.description.trim());
   useEffect(() => {
     document.title = "Services — Northstarr";
   }, []);
@@ -57,6 +58,30 @@ const Services = () => {
             </div>
           );
         })}
+        {customServices.map((service) => (
+          <div key={service.id} className="glow-border rounded-3xl p-8 hover-lift relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
+            <div className="h-14 w-14 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Sparkles className="h-7 w-7 text-primary-foreground" />
+            </div>
+            <h3 className="mt-5 font-display font-bold text-2xl">{service.label}</h3>
+            {service.tagline && <p className="mt-1 text-sm text-primary font-medium">{service.tagline}</p>}
+            <p className="mt-2 text-muted-foreground">{service.description}</p>
+            {service.features && (
+              <ul className="mt-5 space-y-2">
+                {service.features.split("\n").map((f) => f.trim()).filter(Boolean).map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-accent" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Button asChild variant="outline" className="mt-6">
+              <Link to="/contact">Get a quote <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            </Button>
+          </div>
+        ))}
       </div>
     </div>
   );

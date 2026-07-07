@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SERVICES, ServiceKey, SERVICE_KEYS } from "@/lib/services";
 
 export type ServiceOverride = { label?: string; tagline?: string; description?: string };
+export type CustomService = { id: string; label: string; tagline?: string; description: string; features?: string };
 export type StatItem = { value: string; label: string };
 export type ThemeSettings = {
   primary?: string;
@@ -21,6 +22,22 @@ export type ThemeSettings = {
   gradientFrom?: string;  // HSL
   gradientVia?: string;
   gradientTo?: string;
+  layoutDensity?: "compact" | "balanced" | "spacious";
+  contentWidth?: "focused" | "wide" | "full";
+  cardDepth?: "flat" | "soft" | "deep";
+  animationMode?: "none" | "calm" | "premium" | "cinematic";
+  animationIntensity?: string;
+  hero3d?: "on" | "off";
+  texture?: "on" | "off";
+};
+
+export type LeadField = {
+  id: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  required?: boolean;
+  placeholder?: string;
+  options?: string;
 };
 
 export type HeroSettings = {
@@ -36,12 +53,14 @@ export type HeroSettings = {
 
 export type SiteSettings = {
   services: Partial<Record<ServiceKey, ServiceOverride>>;
+  customServices: CustomService[];
   stats: StatItem[];
   theme: ThemeSettings;
   hero: HeroSettings;
+  leadFields: LeadField[];
 };
 
-const DEFAULTS: SiteSettings = { services: {}, stats: [], theme: {}, hero: {} };
+const DEFAULTS: SiteSettings = { services: {}, customServices: [], stats: [], theme: {}, hero: {}, leadFields: [] };
 
 const Ctx = createContext<{
   settings: SiteSettings;
@@ -100,6 +119,19 @@ const applyTheme = (theme: ThemeSettings) => {
     );
   }
 
+  const dataset = root.dataset;
+  dataset.layoutDensity = theme.layoutDensity || "balanced";
+  dataset.contentWidth = theme.contentWidth || "wide";
+  dataset.cardDepth = theme.cardDepth || "deep";
+  dataset.animationMode = theme.animationMode || "premium";
+  dataset.hero3d = theme.hero3d || "on";
+  dataset.texture = theme.texture || "on";
+  const intensity = Math.max(0, Math.min(2, Number(theme.animationIntensity || "1") || 1));
+  root.style.setProperty("--animation-intensity", String(intensity));
+  root.style.setProperty("--motion-card-scale", String(1 + intensity * 0.012));
+  root.style.setProperty("--motion-float-duration", `${Math.max(4, 9 - intensity * 2)}s`);
+  root.style.setProperty("--motion-ring-duration", `${Math.max(4, 9 - intensity * 2)}s`);
+
   if (theme.headingFont) {
     loadGoogleFont(theme.headingFont);
     root.style.setProperty("--font-heading", `'${theme.headingFont}', serif`);
@@ -144,9 +176,11 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
     const next: SiteSettings = { ...DEFAULTS };
     (data || []).forEach((row: any) => {
       if (row.key === "services") next.services = row.value || {};
+      else if (row.key === "customServices") next.customServices = Array.isArray(row.value) ? row.value : [];
       else if (row.key === "stats") next.stats = Array.isArray(row.value) ? row.value : [];
       else if (row.key === "theme") next.theme = row.value || {};
       else if (row.key === "hero") next.hero = row.value || {};
+      else if (row.key === "leadFields") next.leadFields = Array.isArray(row.value) ? row.value : [];
     });
     setSettings(next);
     applyTheme(next.theme);
