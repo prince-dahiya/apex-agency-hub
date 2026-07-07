@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SERVICES, ServiceKey, SERVICE_KEYS } from "@/lib/services";
 
 export type ServiceOverride = { label?: string; tagline?: string; description?: string };
+export type CustomService = { id: string; label: string; tagline?: string; description: string; features?: string };
 export type StatItem = { value: string; label: string };
 export type ThemeSettings = {
   primary?: string;
@@ -52,13 +53,14 @@ export type HeroSettings = {
 
 export type SiteSettings = {
   services: Partial<Record<ServiceKey, ServiceOverride>>;
+  customServices: CustomService[];
   stats: StatItem[];
   theme: ThemeSettings;
   hero: HeroSettings;
   leadFields: LeadField[];
 };
 
-const DEFAULTS: SiteSettings = { services: {}, stats: [], theme: {}, hero: {}, leadFields: [] };
+const DEFAULTS: SiteSettings = { services: {}, customServices: [], stats: [], theme: {}, hero: {}, leadFields: [] };
 
 const Ctx = createContext<{
   settings: SiteSettings;
@@ -170,6 +172,7 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
     const next: SiteSettings = { ...DEFAULTS };
     (data || []).forEach((row: any) => {
       if (row.key === "services") next.services = row.value || {};
+      else if (row.key === "customServices") next.customServices = Array.isArray(row.value) ? row.value : [];
       else if (row.key === "stats") next.stats = Array.isArray(row.value) ? row.value : [];
       else if (row.key === "theme") next.theme = row.value || {};
       else if (row.key === "hero") next.hero = row.value || {};
