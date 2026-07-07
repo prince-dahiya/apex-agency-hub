@@ -11,10 +11,14 @@ import {
   StatItem,
   ThemeSettings,
   HeroSettings,
+  LeadField,
   THEME_PRESETS,
 } from "@/hooks/useSiteSettings";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Save, RotateCcw, Sparkles } from "lucide-react";
+import { Plus, Trash2, Save, RotateCcw, Sparkles, Wand2, FormInput, Layers3, Eye } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const upsert = async (key: string, value: any) => {
   const { error } = await supabase.from("site_settings").upsert(
@@ -39,6 +43,7 @@ export const SiteSettingsPanel = () => {
   const [stats, setStats] = useState<StatItem[]>([]);
   const [theme, setTheme] = useState<ThemeSettings>({});
   const [hero, setHero] = useState<HeroSettings>({});
+  const [leadFields, setLeadFields] = useState<LeadField[]>([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -46,6 +51,7 @@ export const SiteSettingsPanel = () => {
     setStats(settings.stats || []);
     setTheme(settings.theme || {});
     setHero(settings.hero || {});
+    setLeadFields(settings.leadFields || []);
   }, [settings]);
 
   const saveAll = async () => {
@@ -55,6 +61,7 @@ export const SiteSettingsPanel = () => {
       await upsert("stats", stats);
       await upsert("theme", theme);
       await upsert("hero", hero);
+      await upsert("leadFields", leadFields);
       await reload();
       toast({ title: "Saved", description: "Site settings updated." });
     } catch (e: any) {
@@ -73,6 +80,17 @@ export const SiteSettingsPanel = () => {
   };
 
   const applyPreset = (t: ThemeSettings) => setTheme(t);
+
+  const addLeadField = () => setLeadFields([
+    ...leadFields,
+    { id: `field_${Date.now()}`, label: "", type: "text", required: false, placeholder: "" },
+  ]);
+
+  const updateLeadField = (i: number, patch: Partial<LeadField>) => {
+    const next = [...leadFields];
+    next[i] = { ...next[i], ...patch };
+    setLeadFields(next);
+  };
 
   const colorFields: Array<[keyof ThemeSettings, string]> = [
     ["primary", "Primary (main accent)"],
@@ -127,6 +145,88 @@ export const SiteSettingsPanel = () => {
               </div>
             </button>
           ))}
+        </div>
+      </section>
+
+      {/* APPEARANCE */}
+      <section className="glow-border rounded-xl p-6">
+        <h2 className="font-display text-2xl font-bold mb-1 flex items-center gap-2">
+          <Wand2 className="h-5 w-5 text-primary" /> Full appearance control
+        </h2>
+        <p className="text-sm text-muted-foreground mb-5">
+          Control the whole site's spacing, width, depth, texture, and 3D animation style.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <Label className="text-xs">Page spacing</Label>
+            <Select value={theme.layoutDensity || "balanced"} onValueChange={(v) => setTheme({ ...theme, layoutDensity: v as ThemeSettings["layoutDensity"] })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">Compact</SelectItem>
+                <SelectItem value="balanced">Balanced</SelectItem>
+                <SelectItem value="spacious">Spacious</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Content width</Label>
+            <Select value={theme.contentWidth || "wide"} onValueChange={(v) => setTheme({ ...theme, contentWidth: v as ThemeSettings["contentWidth"] })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="focused">Focused</SelectItem>
+                <SelectItem value="wide">Wide</SelectItem>
+                <SelectItem value="full">Full</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Card depth</Label>
+            <Select value={theme.cardDepth || "deep"} onValueChange={(v) => setTheme({ ...theme, cardDepth: v as ThemeSettings["cardDepth"] })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="flat">Flat</SelectItem>
+                <SelectItem value="soft">Soft</SelectItem>
+                <SelectItem value="deep">Deep 3D</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-4 mt-5">
+          <div>
+            <Label className="text-xs">Motion style</Label>
+            <Select value={theme.animationMode || "premium"} onValueChange={(v) => setTheme({ ...theme, animationMode: v as ThemeSettings["animationMode"] })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No animation</SelectItem>
+                <SelectItem value="calm">Calm</SelectItem>
+                <SelectItem value="premium">Premium</SelectItem>
+                <SelectItem value="cinematic">Cinematic 3D</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Animation intensity: {theme.animationIntensity || "1"}</Label>
+            <Input
+              type="range"
+              min="0"
+              max="2"
+              step="0.1"
+              value={theme.animationIntensity || "1"}
+              onChange={(e) => setTheme({ ...theme, animationIntensity: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-3 rounded-lg border border-border p-3">
+            <label className="flex items-center justify-between gap-3 text-sm">
+              <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4 text-primary" /> 3D hero animations</span>
+              <Switch checked={(theme.hero3d || "on") === "on"} onCheckedChange={(checked) => setTheme({ ...theme, hero3d: checked ? "on" : "off" })} />
+            </label>
+            <label className="flex items-center justify-between gap-3 text-sm">
+              <span className="inline-flex items-center gap-2"><Eye className="h-4 w-4 text-primary" /> Texture/grain overlay</span>
+              <Switch checked={(theme.texture || "on") === "on"} onCheckedChange={(checked) => setTheme({ ...theme, texture: checked ? "on" : "off" })} />
+            </label>
+          </div>
         </div>
       </section>
 
@@ -237,6 +337,60 @@ export const SiteSettingsPanel = () => {
               <Button size="sm" variant="outline" onClick={() => setStats(stats.filter((_, j) => j !== i))}>
                 <Trash2 className="h-4 w-4" />
               </Button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CLIENT FORM FIELDS */}
+      <section className="glow-border rounded-xl p-6">
+        <div className="flex items-center justify-between mb-1 gap-3 flex-wrap">
+          <h2 className="font-display text-2xl font-bold flex items-center gap-2">
+            <FormInput className="h-5 w-5 text-primary" /> Client enquiry fields
+          </h2>
+          <Button size="sm" variant="outline" onClick={addLeadField}>
+            <Plus className="h-4 w-4 mr-1" /> Add field
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground mb-5">
+          Add extra questions to the contact form. Client answers are added to the lead message in admin.
+        </p>
+        <div className="grid gap-4">
+          {leadFields.length === 0 && <p className="text-sm text-muted-foreground">No extra fields — contact form uses the default fields only.</p>}
+          {leadFields.map((field, i) => (
+            <div key={field.id} className="rounded-lg border border-border p-4 grid md:grid-cols-[1.1fr_0.8fr_1.2fr_auto] gap-3 items-end">
+              <div>
+                <Label className="text-xs">Field label</Label>
+                <Input value={field.label} placeholder="Budget range" onChange={(e) => updateLeadField(i, { label: e.target.value })} />
+              </div>
+              <div>
+                <Label className="text-xs">Type</Label>
+                <Select value={field.type} onValueChange={(v) => updateLeadField(i, { type: v as LeadField["type"] })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Short answer</SelectItem>
+                    <SelectItem value="textarea">Long answer</SelectItem>
+                    <SelectItem value="select">Dropdown</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-xs">Placeholder / dropdown options</Label>
+                <Input
+                  value={field.type === "select" ? field.options || "" : field.placeholder || ""}
+                  placeholder={field.type === "select" ? "Option 1, Option 2, Option 3" : "Type here…"}
+                  onChange={(e) => updateLeadField(i, field.type === "select" ? { options: e.target.value } : { placeholder: e.target.value })}
+                />
+              </div>
+              <div className="flex items-center gap-3 pb-2">
+                <label className="flex items-center gap-2 text-xs">
+                  <Checkbox checked={!!field.required} onCheckedChange={(checked) => updateLeadField(i, { required: checked === true })} />
+                  Required
+                </label>
+                <Button size="sm" variant="outline" onClick={() => setLeadFields(leadFields.filter((_, j) => j !== i))}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           ))}
         </div>
