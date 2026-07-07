@@ -126,7 +126,11 @@ const applyTheme = (theme: ThemeSettings) => {
   dataset.animationMode = theme.animationMode || "premium";
   dataset.hero3d = theme.hero3d || "on";
   dataset.texture = theme.texture || "on";
-  root.style.setProperty("--animation-intensity", theme.animationIntensity || "1");
+  const intensity = Math.max(0, Math.min(2, Number(theme.animationIntensity || "1") || 1));
+  root.style.setProperty("--animation-intensity", String(intensity));
+  root.style.setProperty("--motion-card-scale", String(1 + intensity * 0.012));
+  root.style.setProperty("--motion-float-duration", `${Math.max(4, 9 - intensity * 2)}s`);
+  root.style.setProperty("--motion-ring-duration", `${Math.max(4, 9 - intensity * 2)}s`);
 
   if (theme.headingFont) {
     loadGoogleFont(theme.headingFont);
