@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Zap, Star, Compass } from "lucide-react";
+import { ArrowRight, CheckCircle2, Zap, Star, Compass, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
