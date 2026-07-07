@@ -19,6 +19,7 @@ const Home = () => {
   const { getService, settings } = useSiteSettings();
   const stats = settings.stats || [];
   const hero = settings.hero || {};
+  const customServices = (settings.customServices || []).filter((service) => service.label.trim() && service.description.trim());
   const [projects, setProjects] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
 
@@ -170,6 +171,32 @@ const Home = () => {
                 </motion.div>
               );
             })}
+            {customServices.map((service, i) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: (SERVICE_KEYS.length + i) * 0.06, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Link to="/services" className="block glow-border ornate-corners card-3d rounded-md p-8 group h-full">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="h-16 w-16 rounded-md bg-gradient-primary flex items-center justify-center shadow-glow rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                      <Sparkles className="h-8 w-8 text-primary-foreground" />
+                    </div>
+                    <span className="font-mono-sharp text-[10px] tracking-widest text-muted-foreground/60">
+                      № {String(SERVICE_KEYS.length + i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3 className="font-serif-display text-2xl font-medium">{service.label}</h3>
+                  <div className="my-3 h-px w-10 bg-primary/60" />
+                  <p className="text-muted-foreground font-elegant text-base leading-relaxed">{service.description}</p>
+                  <div className="mt-6 inline-flex items-center text-sm text-primary group-hover:gap-3 gap-1 transition-all font-mono-sharp uppercase tracking-wider">
+                    Discover <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
