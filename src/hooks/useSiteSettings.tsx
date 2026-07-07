@@ -21,6 +21,22 @@ export type ThemeSettings = {
   gradientFrom?: string;  // HSL
   gradientVia?: string;
   gradientTo?: string;
+  layoutDensity?: "compact" | "balanced" | "spacious";
+  contentWidth?: "focused" | "wide" | "full";
+  cardDepth?: "flat" | "soft" | "deep";
+  animationMode?: "none" | "calm" | "premium" | "cinematic";
+  animationIntensity?: string;
+  hero3d?: "on" | "off";
+  texture?: "on" | "off";
+};
+
+export type LeadField = {
+  id: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  required?: boolean;
+  placeholder?: string;
+  options?: string;
 };
 
 export type HeroSettings = {
@@ -39,9 +55,10 @@ export type SiteSettings = {
   stats: StatItem[];
   theme: ThemeSettings;
   hero: HeroSettings;
+  leadFields: LeadField[];
 };
 
-const DEFAULTS: SiteSettings = { services: {}, stats: [], theme: {}, hero: {} };
+const DEFAULTS: SiteSettings = { services: {}, stats: [], theme: {}, hero: {}, leadFields: [] };
 
 const Ctx = createContext<{
   settings: SiteSettings;
@@ -100,6 +117,15 @@ const applyTheme = (theme: ThemeSettings) => {
     );
   }
 
+  const dataset = root.dataset;
+  dataset.layoutDensity = theme.layoutDensity || "balanced";
+  dataset.contentWidth = theme.contentWidth || "wide";
+  dataset.cardDepth = theme.cardDepth || "deep";
+  dataset.animationMode = theme.animationMode || "premium";
+  dataset.hero3d = theme.hero3d || "on";
+  dataset.texture = theme.texture || "on";
+  root.style.setProperty("--animation-intensity", theme.animationIntensity || "1");
+
   if (theme.headingFont) {
     loadGoogleFont(theme.headingFont);
     root.style.setProperty("--font-heading", `'${theme.headingFont}', serif`);
@@ -147,6 +173,7 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
       else if (row.key === "stats") next.stats = Array.isArray(row.value) ? row.value : [];
       else if (row.key === "theme") next.theme = row.value || {};
       else if (row.key === "hero") next.hero = row.value || {};
+      else if (row.key === "leadFields") next.leadFields = Array.isArray(row.value) ? row.value : [];
     });
     setSettings(next);
     applyTheme(next.theme);
