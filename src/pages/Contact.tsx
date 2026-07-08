@@ -117,74 +117,122 @@ const Contact = () => {
 
   useEffect(() => { document.title = "Contact — Northstarr"; }, []);
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fullPhone = form.phone.trim() ? `${form.countryCode} ${form.phone.trim()}`.trim() : "";
-    const parsed = schema.safeParse({ ...form, phone: fullPhone });
-    if (!parsed.success) {
-      toast({ title: "Please check your form", description: parsed.error.issues[0].message, variant: "destructive" });
-      return;
-    }
+const submit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const missingField = extraFields.find((field) => field.required && !extraAnswers[field.id]?.trim());
-    if (missingField) {
-      toast({ title: "Please check your form", description: `${missingField.label} is required.`, variant: "destructive" });
-      return;
-    }
+  const fullPhone = form.phone.trim()
+    ? `${form.countryCode} ${form.phone.trim()}`.trim()
+    : "";
 
-    const extraMessage = extraFields
-      .map((field) => ({ label: field.label.trim(), answer: (extraAnswers[field.id] || "").trim() }))
-      .filter((item) => item.answer)
-      .map((item) => `${item.label}: ${item.answer}`)
-      .join("\n");
+  const parsed = schema.safeParse({ ...form, phone: fullPhone });
 
-    const availability = [
-      form.preferredDate ? `Preferred date: ${form.preferredDate}` : "",
-      form.preferredTime ? `Preferred time: ${form.preferredTime}` : "",
-    ].filter(Boolean).join("\n");
+  if (!parsed.success) {
+    toast({
+      title: "Please check your form",
+      description: parsed.error.issues[0].message,
+      variant: "destructive",
+    });
+    return;
+  }
 
-    const finalMessage = [form.message.trim(), availability, extraMessage && `Extra client details:\n${extraMessage}`]
-      .filter(Boolean)
-      .join("\n\n");
+  const missingField = extraFields.find(
+    (field) => field.required && !extraAnswers[field.id]?.trim()
+  );
 
-    setSubmitting(true);
-    const { error } = await supabase.from("leads").insert({
-      name: form.name.trim(),
-      email: form.email.trim(),
-      phone: fullPhone || null,
-      service: form.service || null,
-      message: finalMessage,
+  if (missingField) {
+    toast({
+      title: "Please check your form",
+      description: `${missingField.label} is required.`,
+      variant: "destructive",
+    });
+    return;
+  }
+
+  const extraMessage = extraFields
+    .map((field) => ({
+      label: field.label.trim(),
+      answer: (extraAnswers[field.id] || "").trim(),
+    }))
+    .filter((item) => item.answer)
+    .map((item) => `${item.label}: ${item.answer}`)
+    .join("\n");
+
+  const availability = [
+    form.preferredDate ? `Preferred date: ${form.preferredDate}` : "",
+    form.preferredTime ? `Preferred time: ${form.preferredTime}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const finalMessage = [
+    form.message.trim(),
+    availability,
+    extraMessage && `Extra client details:\n${extraMessage}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  setSubmitting(true);
+
+  const { error } = await supabase.from("leads").insert({
+    name: form.name.trim(),
+    email: form.email.trim(),
+    phone: fullPhone || null,
+    service: form.service || null,
+    message: finalMessage,
+  });
+
+  if (!error) {
+    const whatsappMessage = `*New Contact Form Submission*
+
+*Name:* ${form.name}
+*Email:* ${form.email}
+*Phone:* ${fullPhone || "N/A"}
+*Service:* ${form.service || "N/A"}
+*Preferred Date:* ${form.preferredDate || "N/A"}
+*Preferred Time:* ${form.preferredTime || "N/A"}
+
+*Message:*
+${form.message}
+
+${extraMessage ? `*Extra Details:*\n${extraMessage}` : ""}`;
+
+    window.open(
+      `https://wa.me/918683899730?text=${encodeURIComponent(
+        whatsappMessage
+      )}`,
+      "_blank"
+    );
+  }
+
+  setSubmitting(false);
+
+  if (error) {
+    toast({
+      title: "Could not send",
+      description: error.message,
+      variant: "destructive",
+    });
+  } else {
+    toast({
+      title: "Message sent!",
+      description: "Please tap Send in WhatsApp to complete your enquiry.",
     });
 
-    if (!error) {
-      // Fire-and-forget email notification to admin
-      try {
-        await supabase.functions.invoke("notify-lead", {
-          body: {
-            name: form.name.trim(),
-            email: form.email.trim(),
-            phone: fullPhone || null,
-            service: form.service || null,
-            preferredDate: form.preferredDate || null,
-            preferredTime: form.preferredTime || null,
-            message: form.message.trim(),
-            extras: extraFields
-              .map((field) => ({ label: field.label.trim(), answer: (extraAnswers[field.id] || "").trim() }))
-              .filter((item) => item.answer),
-          },
-        });
-      } catch (_) { /* no-op: lead is already stored */ }
-    }
+    setForm({
+      name: "",
+      email: "",
+      countryCode: "+91",
+      phone: "",
+      service: "",
+      preferredDate: "",
+      preferredTime: "",
+      message: "",
+    });
 
-    setSubmitting(false);
-    if (error) {
-      toast({ title: "Could not send", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-      setForm({ name: "", email: "", countryCode: "+91", phone: "", service: "", preferredDate: "", preferredTime: "", message: "" });
-      setExtraAnswers({});
-    }
-  };
+    setExtraAnswers({});
+  }
+};
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -198,7 +246,7 @@ const Contact = () => {
 
       <div className="grid lg:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <a href="https://wa.me/918683899730" target="_top" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+        <a href="https://wa.me/918683899730" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-glow">
               <MessageCircle className="h-6 w-6 text-white" />
             </div>
@@ -207,7 +255,7 @@ const Contact = () => {
               <div className="text-sm text-muted-foreground">Chat with us instantly</div>
             </div>
           </a>
-          <a href="mailto:princedahiya605@gmail.com" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+<a href="mailto:princedahiya605@gmail.com" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-glow">
               <Mail className="h-6 w-6 text-white" />
             </div>
@@ -216,7 +264,7 @@ const Contact = () => {
               <div className="text-sm text-muted-foreground">princedahiya605@gmail.com</div>
             </div>
           </a>
-          <a href="https://www.instagram.com/northstarr.co.in/" target="_top" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
+      <a href="https://www.instagram.com/northstarr.co.in/" target="_blank" rel="noopener noreferrer" className="glow-border rounded-2xl p-6 flex items-center gap-4 hover-lift">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-glow">
               <Instagram className="h-6 w-6 text-white" />
             </div>
