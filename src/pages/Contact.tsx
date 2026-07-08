@@ -7,9 +7,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SERVICES, SERVICE_KEYS } from "@/lib/services";
+import { SERVICE_KEYS } from "@/lib/services";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { z } from "zod";
+
+const COUNTRY_CODES: { code: string; label: string }[] = [
+  { code: "+91", label: "🇮🇳 India (+91)" },
+  { code: "+1", label: "🇺🇸 USA / Canada (+1)" },
+  { code: "+44", label: "🇬🇧 United Kingdom (+44)" },
+  { code: "+61", label: "🇦🇺 Australia (+61)" },
+  { code: "+971", label: "🇦🇪 UAE (+971)" },
+  { code: "+966", label: "🇸🇦 Saudi Arabia (+966)" },
+  { code: "+65", label: "🇸🇬 Singapore (+65)" },
+  { code: "+49", label: "🇩🇪 Germany (+49)" },
+  { code: "+33", label: "🇫🇷 France (+33)" },
+  { code: "+81", label: "🇯🇵 Japan (+81)" },
+  { code: "+55", label: "🇧🇷 Brazil (+55)" },
+  { code: "+27", label: "🇿🇦 South Africa (+27)" },
+  { code: "+other", label: "🌍 Other / Foreign" },
+];
 
 const schema = z.object({
   name: z.string().trim().min(1).max(80),
@@ -19,9 +35,24 @@ const schema = z.object({
   message: z.string().trim().min(5).max(2000),
 });
 
+const todayISO = () => {
+  const d = new Date();
+  d.setDate(d.getDate());
+  return d.toISOString().slice(0, 10);
+};
+
 const Contact = () => {
   const { settings, getService } = useSiteSettings();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    countryCode: "+91",
+    phone: "",
+    service: "",
+    preferredDate: "",
+    preferredTime: "",
+    message: "",
+  });
   const [extraAnswers, setExtraAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const extraFields = (settings.leadFields || []).filter((field) => field.label.trim());
@@ -30,7 +61,8 @@ const Contact = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse(form);
+    const fullPhone = form.phone.trim() ? `${form.countryCode === "+other" ? "" : form.countryCode} ${form.phone.trim()}`.trim() : "";
+    const parsed = schema.safeParse({ ...form, phone: fullPhone });
     if (!parsed.success) {
       toast({ title: "Please check your form", description: parsed.error.issues[0].message, variant: "destructive" });
       return;
@@ -48,20 +80,50 @@ const Contact = () => {
       .map((item) => `${item.label}: ${item.answer}`)
       .join("\n");
 
+    const availability = [
+      form.preferredDate ? `Preferred date: ${form.preferredDate}` : "",
+      form.preferredTime ? `Preferred time: ${form.preferredTime}` : "",
+    ].filter(Boolean).join("\n");
+
+    const finalMessage = [form.message.trim(), availability, extraMessage && `Extra client details:\n${extraMessage}`]
+      .filter(Boolean)
+      .join("\n\n");
+
     setSubmitting(true);
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
       email: form.email.trim(),
-      phone: form.phone.trim() || null,
+      phone: fullPhone || null,
       service: form.service || null,
-      message: extraMessage ? `${form.message.trim()}\n\nExtra client details:\n${extraMessage}` : form.message.trim(),
+      message: finalMessage,
     });
+
+    if (!error) {
+      // Fire-and-forget email notification to admin
+      try {
+        await supabase.functions.invoke("notify-lead", {
+          body: {
+            name: form.name.trim(),
+            email: form.email.trim(),
+            phone: fullPhone || null,
+            service: form.service || null,
+            preferredDate: form.preferredDate || null,
+            preferredTime: form.preferredTime || null,
+            message: form.message.trim(),
+            extras: extraFields
+              .map((field) => ({ label: field.label.trim(), answer: (extraAnswers[field.id] || "").trim() }))
+              .filter((item) => item.answer),
+          },
+        });
+      } catch (_) { /* no-op: lead is already stored */ }
+    }
+
     setSubmitting(false);
     if (error) {
       toast({ title: "Could not send", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-      setForm({ name: "", email: "", phone: "", service: "", message: "" });
+      setForm({ name: "", email: "", countryCode: "+91", phone: "", service: "", preferredDate: "", preferredTime: "", message: "" });
       setExtraAnswers({});
     }
   };
@@ -127,23 +189,63 @@ const Contact = () => {
               <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={200} />
             </div>
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <Label>Phone</Label>
-              <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={40} />
-            </div>
-            <div>
-              <Label>Service Interested In</Label>
-              <Select value={form.service} onValueChange={(v) => setForm({ ...form, service: v })}>
-                <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
-                <SelectContent>
-                  {SERVICE_KEYS.map((k) => (
-                    <SelectItem key={k} value={getService(k).label}>{getService(k).label}</SelectItem>
+
+          <div>
+            <Label>Phone</Label>
+            <div className="grid grid-cols-[minmax(140px,180px)_1fr] gap-2">
+              <Select value={form.countryCode} onValueChange={(v) => setForm({ ...form, countryCode: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {COUNTRY_CODES.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>{c.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              <Input
+                inputMode="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                maxLength={20}
+                placeholder="Phone number"
+              />
             </div>
           </div>
+
+          <div>
+            <Label>Service Interested In</Label>
+            <Select value={form.service} onValueChange={(v) => setForm({ ...form, service: v })}>
+              <SelectTrigger><SelectValue placeholder="Choose a service…" /></SelectTrigger>
+              <SelectContent>
+                {SERVICE_KEYS.map((k) => (
+                  <SelectItem key={k} value={getService(k).label}>{getService(k).label}</SelectItem>
+                ))}
+                {(settings.customServices || []).map((s) => (
+                  <SelectItem key={s.id} value={s.label}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label>Best date to talk</Label>
+              <Input
+                type="date"
+                min={todayISO()}
+                value={form.preferredDate}
+                onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Best time</Label>
+              <Input
+                type="time"
+                value={form.preferredTime}
+                onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
+              />
+            </div>
+          </div>
+
           {extraFields.length > 0 && (
             <div className="grid md:grid-cols-2 gap-4">
               {extraFields.map((field) => (
@@ -182,7 +284,7 @@ const Contact = () => {
           )}
           <div>
             <Label>Message *</Label>
-            <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required maxLength={2000} />
+            <Textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={5} required maxLength={2000} placeholder="Tell us about your goals…" />
           </div>
           <Button type="submit" variant="hero" size="lg" disabled={submitting} className="w-full">
             {submitting ? "Sending…" : "Send Message"}
