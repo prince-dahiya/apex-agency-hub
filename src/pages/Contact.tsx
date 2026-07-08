@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Mail, MessageCircle, Instagram, MapPin } from "lucide-react";
+import { Mail, MessageCircle, Instagram, MapPin, Check, ChevronsUpDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { SERVICE_KEYS } from "@/lib/services";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { z } from "zod";
@@ -247,15 +250,42 @@ const Contact = () => {
 
           <div>
             <Label>Phone</Label>
-            <div className="grid grid-cols-[minmax(140px,180px)_1fr] gap-2">
-              <Select value={form.countryCode} onValueChange={(v) => setForm({ ...form, countryCode: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {COUNTRY_CODES.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>{c.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-[minmax(160px,220px)_1fr] gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    className="justify-between font-normal"
+                  >
+                    <span className="truncate">
+                      {COUNTRY_CODES.find((c) => c.code === form.countryCode)?.label || "Select country"}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[300px] p-0 pointer-events-auto" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search country…" />
+                    <CommandList>
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {COUNTRY_CODES.map((c) => (
+                          <CommandItem
+                            key={c.code}
+                            value={c.label}
+                            onSelect={() => setForm({ ...form, countryCode: c.code })}
+                          >
+                            <Check className={cn("mr-2 h-4 w-4", form.countryCode === c.code ? "opacity-100" : "opacity-0")} />
+                            {c.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <Input
                 inputMode="tel"
                 value={form.phone}
@@ -265,6 +295,7 @@ const Contact = () => {
               />
             </div>
           </div>
+
 
           <div>
             <Label>Service Interested In</Label>
