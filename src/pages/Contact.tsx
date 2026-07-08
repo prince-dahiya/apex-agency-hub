@@ -116,7 +116,7 @@ const Contact = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fullPhone = form.phone.trim() ? `${form.countryCode === "+other" ? "" : form.countryCode} ${form.phone.trim()}`.trim() : "";
+    const fullPhone = form.phone.trim() ? `${form.countryCode} ${form.phone.trim()}`.trim() : "";
     const parsed = schema.safeParse({ ...form, phone: fullPhone });
     if (!parsed.success) {
       toast({ title: "Please check your form", description: parsed.error.issues[0].message, variant: "destructive" });
