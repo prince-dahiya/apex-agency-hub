@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
 const OWNER_EMAIL = "princedahiya605@gmail.com";
+const OWNER_PASSWORD = "princedahiya@123";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
