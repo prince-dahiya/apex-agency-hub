@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
 const OWNER_EMAIL = "princedahiya605@gmail.com";
+const OWNER_PASSWORD = "princedahiya@123";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -24,8 +25,9 @@ const Auth = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().toLowerCase() !== OWNER_EMAIL) {
-      toast({ title: "Access denied", description: "This area is restricted.", variant: "destructive" });
+    const emailNorm = email.trim().toLowerCase();
+    if (emailNorm !== OWNER_EMAIL || password !== OWNER_PASSWORD) {
+      toast({ title: "Access denied", description: "Invalid admin credentials.", variant: "destructive" });
       return;
     }
     setLoading(true);
