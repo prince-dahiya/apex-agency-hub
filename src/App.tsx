@@ -13,6 +13,7 @@ import PortfolioDetail from "./pages/PortfolioDetail";
 import Reviews from "./pages/Reviews";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
