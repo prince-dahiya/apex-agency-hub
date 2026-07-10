@@ -1,1 +1,1 @@
-UPDATE auth.users SET encrypted_password = crypt('DahiyaPrince@321', gen_salt('bf')) WHERE email = 'princedahiya605@gmail.com';
+UPDATE auth.users SET encrypted_password = crypt('DahiyaPrince', gen_salt('bf')) WHERE email = 'princedahiya605@gmail.com';
