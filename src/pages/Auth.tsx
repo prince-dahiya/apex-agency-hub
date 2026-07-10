@@ -25,8 +25,9 @@ const Auth = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().toLowerCase() !== OWNER_EMAIL) {
-      toast({ title: "Access denied", description: "This area is restricted.", variant: "destructive" });
+    const emailNorm = email.trim().toLowerCase();
+    if (emailNorm !== OWNER_EMAIL || password !== OWNER_PASSWORD) {
+      toast({ title: "Access denied", description: "Invalid admin credentials.", variant: "destructive" });
       return;
     }
     setLoading(true);
