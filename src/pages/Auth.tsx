@@ -52,6 +52,20 @@ const Auth = () => {
     navigate("/admin", { replace: true });
   };
 
+  const sendReset = async () => {
+    const target = (email || OWNER_EMAIL).trim();
+    if (target.toLowerCase() !== OWNER_EMAIL) {
+      return toast({ title: "Access denied", description: "This area is restricted.", variant: "destructive" });
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(target, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) return toast({ title: "Could not send reset", description: error.message, variant: "destructive" });
+    toast({ title: "Reset email sent", description: `Check ${target} for a password reset link.` });
+  };
+
   return (
     <div className="max-w-md mx-auto px-4 py-16">
       <Link to="/" className="flex items-center justify-center gap-2 mb-8">
@@ -82,6 +96,14 @@ const Auth = () => {
           <Button type="submit" variant="hero" className="w-full" disabled={loading}>
             {loading ? "Please wait…" : "Sign in"}
           </Button>
+          <button
+            type="button"
+            onClick={sendReset}
+            disabled={loading}
+            className="w-full text-sm text-primary hover:underline text-center"
+          >
+            Forgot password? Email me a reset link
+          </button>
         </form>
       </div>
     </div>
