@@ -96,6 +96,14 @@ const Auth = () => {
           <Button type="submit" variant="hero" className="w-full" disabled={loading}>
             {loading ? "Please wait…" : "Sign in"}
           </Button>
+          <button
+            type="button"
+            onClick={sendReset}
+            disabled={loading}
+            className="w-full text-sm text-primary hover:underline text-center"
+          >
+            Forgot password? Email me a reset link
+          </button>
         </form>
       </div>
     </div>
